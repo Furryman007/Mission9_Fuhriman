@@ -1,44 +1,68 @@
-import './App.css';
+import "./App.css";
 
-const bandNames = [
-    {name: "Dire Straits", members: "Mark Knopfler, David Knopfler, John Illsley, Pick Withers", formed: 1977},
-    {name: "R.E.M.", members: "Michael Stipe, Peter Buck, Mike Mills, Bill Berry", formed: 1980},
-    {name: "Collective Soul", members: "Ed Roland, Dean Roland, David Neal, Ross Childress, Shane Evans", formed: 1992},
-    {name: "The Smiths", members: "Morrissey, Johnny Marr, Andy Rourke, Mike Joyce", formed: 1982}
-];
+// Import the raw data from the JSON file
+import rawData from "./CollegeBasketballTeams.json";
 
-function Welcome(){
-  return (<h1>Criminally Underrated Bands</h1>);
+type RawTeam = {
+  tid: number;
+  school: string;
+  name: string;
+  city: string;
+  state: string;
+};
+
+type Team = {
+  schoolName: string;
+  mascotName: string;
+  location: string;
+};
+
+// Heading Section
+function Heading() {
+  return (
+    <header>
+      <h1>College Basketball Teams</h1>
+      <p>Listed below are all the college basketball teams.</p>
+    </header>
+  );
 }
 
-function Band ({name, members, formed}: {name: string; members: string; formed: number}){
-
-  return(
-    <>
-      <h2>{name}</h2>
-      <h3>Original Members: {members}</h3>
-      <h3>Formed: {formed}</h3>  
-    </>
-  )
+//Team Card
+function TeamCard({ schoolName, mascotName, location }: Team) {
+  return (
+    <div className="team-card">
+      <h2>{schoolName}</h2>
+      <p><strong>Mascot:</strong> {mascotName}</p>
+      <p><strong>Location:</strong> {location}</p>
+    </div>
+  );
 }
 
-function BandList(){
-  return(
-    <>
-      {
-        bandNames.map((singleBand) => (<Band {...singleBand} />))
-      }
-    </>
-  )
+//Team Card List
+function TeamCardList({ teams }: { teams: Team[] }) {
+  return (
+    <section className="team-list">
+      {teams.map((team) => (
+        <TeamCard key={team.schoolName} {...team} />
+      ))}
+    </section>
+  );
 }
 
-function App() {
+// Create a team array 
+export default function App() {
+  const teamsArray = (rawData as { teams: RawTeam[] }).teams;
+
+  const formattedTeams: Team[] = teamsArray.map((team) => ({
+    schoolName: team.school,
+    mascotName: team.name,
+    location: `${team.city}, ${team.state}`,
+  }));
+
   return (
     <>
-      <Welcome/>
-      <BandList/>
+      <Heading />
+      <TeamCardList teams={formattedTeams} />
     </>
-  )
+  );
 }
-
-export default App
